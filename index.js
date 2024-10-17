@@ -6,6 +6,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+app.use('/api/products', productRoute);
+
 app.get('/', (req, res) => {
     res.send("Hello from node API Server Updated");
 });
@@ -20,7 +22,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-app.get('/api/product/:id', async (req, res) => {
+app.get('/api/products/:id', async (req, res) => {
 
     try {
         const {id} = req.params;
@@ -41,7 +43,7 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-app.put('/api/product/:id', async (req, res) => {
+app.put('/api/products/:id', async (req, res) => {
 
     try {
         const {id} = req.params;
@@ -59,7 +61,7 @@ app.put('/api/product/:id', async (req, res) => {
     }
 });
 
-app.delete('/api/product/:id', async (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
 
     try {
         const {id} = req.params;

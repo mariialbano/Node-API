@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 
 const ProductSchema = mongoose.Schema(
     {
+        client_name: {
+            type: String,
+            required: [true, "Name of the client"],
+        },
+
         name: {
             type: String,
             required: [true, "Name of the product"],

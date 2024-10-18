@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Pedidos</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            width: 60%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .button-container {
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            text-align: left;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        label, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .close-modal {
+            text-align: right;
+            cursor: pointer;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CRUD de Pedidos</h1>
+        <div class="button-container">
+            <button id="btnCreate">Novo Pedido</button>
+            <button id="btnGetAll">Buscar Todos os Pedidos</button>
+            <button id="btnGetOne">Buscar Pedido por ID</button>
+            <button id="btnUpdate">Atualizar Pedido</button>
+            <button id="btnDelete">Deletar Pedido</button>
+        </div>
+
+        <!-- Listagem de Produtos -->
+        <ul id="productList"></ul>
+
+        <!-- Modal para Criar Produto -->
+        <div id="createProductModal" class="modal">
+            <div class="modal-content">
+                <div class="close-modal" id="closeCreateModal">x</div>
+                <h2>Criar Novo Pedido</h2>
+                <form id="createProductForm">
+                    <label for="clientName">Nome do Cliente:</label>
+                    <input type="text" id="clientName" placeholder="Nome do Cliente" required>
+
+                    <label for="productName">Nome:</label>
+                    <input type="text" id="productName" placeholder="Nome do Produto" required>
+
+                    <label for="productQuantity">Quantidade:</label>
+                    <input type="number" id="productQuantity" placeholder="Quantidade" required>
+
+                    <label for="productPrice">Preço:</label>
+                    <input type="number" id="productPrice" step="0.01" placeholder="Preço" required>
+
+                    <button type="submit">Criar Pedido</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para Atualizar Produto -->
+        <div id="updateProductModal" class="modal">
+            <div class="modal-content">
+                <div class="close-modal" id="closeUpdateModal">x</div>
+                <h2>Atualizar Pedido</h2>
+                <form id="updateProductForm">
+                    <label for="updateProductId">ID do Pedido:</label>
+                    <input type="text" id="updateProductId" placeholder="ID do Pedido" required>
+
+                    <label for="updateProductName">Novo Nome do Cliente:</label>
+                    <input type="text" id="updateClientName" placeholder="Novo Nome do Cliente (opcional)">
+
+                    <label for="updateProductName">Novo Nome:</label>
+                    <input type="text" id="updateProductName" placeholder="Novo Nome (opcional)">
+
+                    <label for="updateProductQuantity">Nova Quantidade:</label>
+                    <input type="number" id="updateProductQuantity" placeholder="Nova Quantidade (opcional)">
+
+                    <label for="updateProductPrice">Novo Preço:</label>
+                    <input type="number" id="updateProductPrice" step="0.01" placeholder="Novo Preço (opcional)">
+
+                    <button type="submit">Atualizar Pedido</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para Deletar Produto -->
+        <div id="deleteProductModal" class="modal">
+            <div class="modal-content">
+                <div class="close-modal" id="closeDeleteModal">x</div>
+                <h2>Deletar Pedido</h2>
+                <form id="deleteProductForm">
+                    <label for="deleteProductId">ID do Pedido:</label>
+                    <input type="text" id="deleteProductId" placeholder="ID do Pedido" required>
+
+                    <button type="submit">Deletar Pedido</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para Pegar Produto por ID -->
+        <div id="getProductModal" class="modal">
+            <div class="modal-content">
+                <div class="close-modal" id="closeGetModal">x</div>
+                <h2>Pegar Pedido por ID</h2>
+                <form id="getProductForm">
+                    <label for="getProductId">ID do Pedido:</label>
+                    <input type="text" id="getProductId" placeholder="ID do Pedido" required>
+
+                    <button type="submit">Buscar Pedido</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Referências aos botões
+        const btnCreate = document.getElementById('btnCreate');
+        const btnGetAll = document.getElementById('btnGetAll');
+        const btnGetOne = document.getElementById('btnGetOne');
+        const btnUpdate = document.getElementById('btnUpdate');
+        const btnDelete = document.getElementById('btnDelete');
+
+        // Modal referências
+        const createProductModal = document.getElementById('createProductModal');
+        const updateProductModal = document.getElementById('updateProductModal');
+        const deleteProductModal = document.getElementById('deleteProductModal');
+        const getProductModal = document.getElementById('getProductModal');
+
+        // Função para abrir modais
+        function openModal(modal) {
+            modal.style.display = 'flex';
+        }
+
+        // Função para fechar modais
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        // Modal Criar Produto
+        btnCreate.addEventListener('click', () => openModal(createProductModal));
+        document.getElementById('closeCreateModal').addEventListener('click', () => closeModal(createProductModal));
+
+        // Modal Atualizar Produto
+        btnUpdate.addEventListener('click', () => openModal(updateProductModal));
+        document.getElementById('closeUpdateModal').addEventListener('click', () => closeModal(updateProductModal));
+
+        // Modal Deletar Produto
+        btnDelete.addEventListener('click', () => openModal(deleteProductModal));
+        document.getElementById('closeDeleteModal').addEventListener('click', () => closeModal(deleteProductModal));
+
+        // Modal Pegar Produto por ID
+        btnGetOne.addEventListener('click', () => openModal(getProductModal));
+        document.getElementById('closeGetModal').addEventListener('click', () => closeModal(getProductModal));
+
+        // Criar Produto
+        document.getElementById('createProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const client_name = document.getElementById('clientName').value;
+            const name = document.getElementById('productName').value;
+            const quantity = document.getElementById('productQuantity').value;
+            const price = document.getElementById('productPrice').value;
+
+            await fetch('/api/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, quantity, price, client_name }),
+            });
+
+            closeModal(createProductModal);
+        });
+        
+
+    // atualizar produto
+    document.getElementById('updateProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('updateProductId').value;
+        const client_name = document.getElementById('updateClientName').value.trim();
+        const name = document.getElementById('updateProductName').value.trim();
+        const quantity = document.getElementById('updateProductQuantity').value.trim();
+        const price = document.getElementById('updateProductPrice').value.trim();
+
+        // Cria um objeto para armazenar os campos que têm valores
+        const updatedFields = {};
+
+        // Adiciona apenas os campos preenchidos
+        if (client_name) updatedFields.client_name = client_name;
+        if (name) updatedFields.name = name;
+        if (quantity) updatedFields.quantity = quantity;
+        if (price) updatedFields.price = price;
+
+        // Envia apenas os campos atualizados
+        await fetch(`/api/products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedFields),
+        });
+
+        closeModal(updateProductModal);
+    });
+
+        // Deletar Produto
+        document.getElementById('deleteProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('deleteProductId').value;
+
+            await fetch(`/api/products/${id}`, {
+                method: 'DELETE',
+            });
+
+            closeModal(deleteProductModal);
+        });
+
+        // Pegar Produto por ID
+        document.getElementById('getProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('getProductId').value;
+
+            const response = await fetch(`/api/products/${id}`);
+            const product = await response.json();
+            alert(`ID: ${product._id}, Cliente: ${product.client_name}, Produto: ${product.name}, Quantidade: ${product.quantity}, Preço: ${product.price}`);
+
+            closeModal(getProductModal);
+        });
+
+        // Pegar todos os produtos
+        btnGetAll.addEventListener('click', async () => {
+            const response = await fetch('/api/products');
+            const products = await response.json();
+
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `ID: ${product._id}, Cliente: ${product.client_name}, Nome: ${product.name}, Quantidade: ${product.quantity}, Preço: ${product.price}`;
+                productList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>

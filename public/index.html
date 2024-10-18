@@ -96,6 +96,7 @@
             <button id="btnGetOne">Buscar Pedido por ID</button>
             <button id="btnUpdate">Atualizar Pedido</button>
             <button id="btnDelete">Deletar Pedido</button>
+            <button id="btnExport">Exportar Dataset</button>
         </div>
 
         <!-- Listagem de Produtos -->
@@ -238,7 +239,7 @@
 
             closeModal(createProductModal);
         });
-        
+
 
     // atualizar produto
     document.getElementById('updateProductForm').addEventListener('submit', async (e) => {
@@ -309,6 +310,24 @@
                 li.textContent = `ID: ${product._id}, Cliente: ${product.client_name}, Nome: ${product.name}, Quantidade: ${product.quantity}, Preço: ${product.price}`;
                 productList.appendChild(li);
             });
+        });
+
+        // Exportar Dataset
+        btnExport.addEventListener('click', async () => {
+            const response = await fetch('/api/products');
+            const products = await response.json();
+            const dataStr = JSON.stringify(products, null, 2); // Formato JSON bonito
+
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dataset.json'; // Nome do arquivo a ser baixado
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 </body>

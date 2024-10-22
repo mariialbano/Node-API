@@ -55,7 +55,9 @@
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
-            width: 300px;
+            width: 400px; 
+            max-height: 80vh; 
+            overflow-y: auto; 
             text-align: left;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
@@ -99,10 +101,10 @@
             <button id="btnExport">Exportar Dataset</button>
         </div>
 
-        <!-- Listagem de Produtos -->
+        <!-- Listagem de Pedidos -->
         <ul id="productList"></ul>
 
-        <!-- Modal para Criar Produto -->
+        <!-- Modal para Criar Pedido -->
         <div id="createProductModal" class="modal">
             <div class="modal-content">
                 <div class="close-modal" id="closeCreateModal">x</div>
@@ -110,6 +112,18 @@
                 <form id="createProductForm">
                     <label for="clientName">Nome do Cliente:</label>
                     <input type="text" id="clientName" placeholder="Nome do Cliente" required>
+
+                    <label for="clientEmail">E-mail do Cliente:</label>
+                    <input type="text" id="clientEmail" placeholder="Email do Cliente" required>
+
+                    <label for="clientPhone">Telefone do Cliente:</label>
+                    <input type="number" id="clientPhone" placeholder="Telefone do Cliente" required>
+
+                    <label for="clientCPF">CPF do Cliente:</label>
+                    <input type="number" id="clientCPF" placeholder="CPF do Cliente" required>
+
+                    <label for="clientAdress">Endereço do Cliente:</label>
+                    <input type="text" id="clientAdress" placeholder="Endereço do Cliente" required>
 
                     <label for="productName">Nome:</label>
                     <input type="text" id="productName" placeholder="Nome do Produto" required>
@@ -120,12 +134,18 @@
                     <label for="productPrice">Preço:</label>
                     <input type="number" id="productPrice" step="0.01" placeholder="Preço" required>
 
+                    <label for="productPaymentMethod">Forma de Pagamento:</label>
+                    <input type="text" id="productPaymentMethod" placeholder="Forma de Pagamento" required>
+
+                    <label for="productStatus">Status:</label>
+                    <input type="text" id="productStatus" placeholder="Status" required>
+
                     <button type="submit">Criar Pedido</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal para Atualizar Produto -->
+        <!-- Modal para Atualizar Pedido -->
         <div id="updateProductModal" class="modal">
             <div class="modal-content">
                 <div class="close-modal" id="closeUpdateModal">x</div>
@@ -134,8 +154,20 @@
                     <label for="updateProductId">ID do Pedido:</label>
                     <input type="text" id="updateProductId" placeholder="ID do Pedido" required>
 
-                    <label for="updateProductName">Novo Nome do Cliente:</label>
+                    <label for="updateClientName">Novo Nome do Cliente:</label>
                     <input type="text" id="updateClientName" placeholder="Novo Nome do Cliente (opcional)">
+
+                    <label for="updateClientEmail">Novo E-mail do Cliente:</label>
+                    <input type="text" id="updateClientEmail" placeholder="Novo Email do Cliente (opcional)">
+
+                    <label for="updateClientPhone">Novo Telefone do Cliente:</label>
+                    <input type="text" id="updateClientPhone" placeholder="Novo Telefone do Cliente (opcional)">
+
+                    <label for="updateClientCPF">Novo CPF do Cliente:</label>
+                    <input type="text" id="updateClientCPF" placeholder="Novo CPF do Cliente (opcional)">
+
+                    <label for="updateClientAdress">Novo Endereço do Cliente:</label>
+                    <input type="text" id="updateClientAdress" placeholder="Novo Endereço do Cliente (opcional)">
 
                     <label for="updateProductName">Novo Nome:</label>
                     <input type="text" id="updateProductName" placeholder="Novo Nome (opcional)">
@@ -146,12 +178,18 @@
                     <label for="updateProductPrice">Novo Preço:</label>
                     <input type="number" id="updateProductPrice" step="0.01" placeholder="Novo Preço (opcional)">
 
+                    <label for="updateProductPaymentMethod">Nova Forma de Pagamento:</label>
+                    <input type="text" id="updateProductPaymentMethod" placeholder="Nova Forma de Pagamento (opcional)">
+
+                    <label for="updateProductStatus">Novo Status:</label>
+                    <input type="text" id="updateProductStatus" placeholder="Novo Status (opcional)">
+
                     <button type="submit">Atualizar Pedido</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal para Deletar Produto -->
+        <!-- Modal para Deletar Pedido -->
         <div id="deleteProductModal" class="modal">
             <div class="modal-content">
                 <div class="close-modal" id="closeDeleteModal">x</div>
@@ -165,7 +203,7 @@
             </div>
         </div>
 
-        <!-- Modal para Pegar Produto por ID -->
+        <!-- Modal para Pegar Pedido por ID -->
         <div id="getProductModal" class="modal">
             <div class="modal-content">
                 <div class="close-modal" id="closeGetModal">x</div>
@@ -181,86 +219,100 @@
     </div>
 
     <script>
-        // Referências aos botões
+
         const btnCreate = document.getElementById('btnCreate');
         const btnGetAll = document.getElementById('btnGetAll');
         const btnGetOne = document.getElementById('btnGetOne');
         const btnUpdate = document.getElementById('btnUpdate');
         const btnDelete = document.getElementById('btnDelete');
 
-        // Modal referências
         const createProductModal = document.getElementById('createProductModal');
         const updateProductModal = document.getElementById('updateProductModal');
         const deleteProductModal = document.getElementById('deleteProductModal');
         const getProductModal = document.getElementById('getProductModal');
 
-        // Função para abrir modais
         function openModal(modal) {
             modal.style.display = 'flex';
         }
 
-        // Função para fechar modais
         function closeModal(modal) {
             modal.style.display = 'none';
         }
 
-        // Modal Criar Produto
+        // Modal Criar Pedido
         btnCreate.addEventListener('click', () => openModal(createProductModal));
         document.getElementById('closeCreateModal').addEventListener('click', () => closeModal(createProductModal));
 
-        // Modal Atualizar Produto
+        // Modal Atualizar Pedido
         btnUpdate.addEventListener('click', () => openModal(updateProductModal));
         document.getElementById('closeUpdateModal').addEventListener('click', () => closeModal(updateProductModal));
 
-        // Modal Deletar Produto
+        // Modal Deletar Pedido
         btnDelete.addEventListener('click', () => openModal(deleteProductModal));
         document.getElementById('closeDeleteModal').addEventListener('click', () => closeModal(deleteProductModal));
 
-        // Modal Pegar Produto por ID
+        // Modal Pegar Pedido por ID
         btnGetOne.addEventListener('click', () => openModal(getProductModal));
         document.getElementById('closeGetModal').addEventListener('click', () => closeModal(getProductModal));
 
-        // Criar Produto
+        // Criar Pedido
         document.getElementById('createProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const client_name = document.getElementById('clientName').value;
+            const client_email = document.getElementById('clientEmail').value;
+            const client_phone = document.getElementById('clientPhone').value;
+            const client_cpf = document.getElementById('clientCPF').value;
+            const client_adress = document.getElementById('clientAdress').value;
             const name = document.getElementById('productName').value;
             const quantity = document.getElementById('productQuantity').value;
             const price = document.getElementById('productPrice').value;
+            const payment_method = document.getElementById('productPaymentMethod').value;
+            const status = document.getElementById('productStatus').value;
+            
 
             await fetch('/api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, quantity, price, client_name }),
+                body: JSON.stringify({ name, quantity, price, client_name, client_email, client_phone, client_cpf, client_adress, payment_method, status }),
             });
 
             closeModal(createProductModal);
         });
 
 
-    // atualizar produto
+    // atualizar pedido
     document.getElementById('updateProductForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const id = document.getElementById('updateProductId').value;
         const client_name = document.getElementById('updateClientName').value.trim();
+        const client_email = document.getElementById('updateClientEmail').value.trim();
+        const client_phone = document.getElementById('updateClientPhone').value.trim();
+        const client_cpf = document.getElementById('updateClientCPF').value.trim();
+        const client_adress = document.getElementById('updateClientAdress').value.trim();
         const name = document.getElementById('updateProductName').value.trim();
         const quantity = document.getElementById('updateProductQuantity').value.trim();
         const price = document.getElementById('updateProductPrice').value.trim();
+        const payment_method = document.getElementById('updateProductPaymentMethod').value.trim();
+        const status = document.getElementById('updateProductStatus').value.trim();
 
-        // Cria um objeto para armazenar os campos que têm valores
         const updatedFields = {};
 
         // Adiciona apenas os campos preenchidos
         if (client_name) updatedFields.client_name = client_name;
+        if (client_email) updatedFields.client_email = client_email;
+        if (client_phone) updatedFields.client_phone = client_phone;
+        if (client_cpf) updatedFields.client_cpf = client_cpf;
+        if (client_adress) updatedFields.client_adress = client_adress;
         if (name) updatedFields.name = name;
         if (quantity) updatedFields.quantity = quantity;
         if (price) updatedFields.price = price;
+        if (payment_method) updatedFields.payment_method = payment_method;
+        if (status) updatedFields.status = status;
 
-        // Envia apenas os campos atualizados
         await fetch(`/api/products/${id}`, {
             method: 'PUT',
             headers: {
@@ -272,7 +324,7 @@
         closeModal(updateProductModal);
     });
 
-        // Deletar Produto
+        // Deletar Pedido
         document.getElementById('deleteProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -285,7 +337,7 @@
             closeModal(deleteProductModal);
         });
 
-        // Pegar Produto por ID
+        // Pegar Pedido por ID
         document.getElementById('getProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -293,12 +345,22 @@
 
             const response = await fetch(`/api/products/${id}`);
             const product = await response.json();
-            alert(`ID: ${product._id}, Cliente: ${product.client_name}, Produto: ${product.name}, Quantidade: ${product.quantity}, Preço: ${product.price}`);
+            alert(`ID: ${product._id}, 
+                   Cliente: ${product.client_name}, 
+                   Email: ${product.client_email},
+                   Telefone: ${product.client_phone},
+                   CPF: ${product.client_cpf},
+                   Endereço: ${product.client_adress},
+                   Produto: ${product.name}, 
+                   Quantidade: ${product.quantity}, 
+                   Preço: ${product.price},
+                   Forma de Pagamento: ${product.payment_method},
+                   Status: ${product.status}`);
 
             closeModal(getProductModal);
         });
 
-        // Pegar todos os produtos
+        // Pegar todos os pedidos
         btnGetAll.addEventListener('click', async () => {
             const response = await fetch('/api/products');
             const products = await response.json();
@@ -307,7 +369,17 @@
             productList.innerHTML = '';
             products.forEach(product => {
                 const li = document.createElement('li');
-                li.textContent = `ID: ${product._id}, Cliente: ${product.client_name}, Nome: ${product.name}, Quantidade: ${product.quantity}, Preço: ${product.price}`;
+                li.textContent = `ID: ${product._id}, 
+                                  Cliente: ${product.client_name},
+                                  Email: ${product.client_email},
+                                  Telefone: ${product.client_phone},
+                                  CPF: ${product.client_cpf},
+                                  Endereço: ${product.client_adress}, 
+                                  Nome: ${product.name}, 
+                                  Quantidade: ${product.quantity}, 
+                                  Preço: ${product.price},
+                                  Forma de Pagamento: ${product.payment_method},
+                                  Status: ${product.status}`;
                 productList.appendChild(li);
             });
         });
@@ -316,14 +388,14 @@
         btnExport.addEventListener('click', async () => {
             const response = await fetch('/api/products');
             const products = await response.json();
-            const dataStr = JSON.stringify(products, null, 2); // Formato JSON bonito
+            const dataStr = JSON.stringify(products, null, 2); 
 
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'dataset.json'; // Nome do arquivo a ser baixado
+            a.download = 'dataset.json'; 
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
